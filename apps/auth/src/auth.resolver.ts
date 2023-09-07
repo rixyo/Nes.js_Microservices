@@ -13,7 +13,7 @@ export class AuthResolver {
   @UseGuards(AuthGuard)
   @Roles(Role.USER)
   async user(@User() user: JWTUserType) {
-    return await this.authService.user(user.userId);
+    return await this.authService.user(user.id);
   }
   @Query((returns) => [UserType])
   @UseGuards(AuthGuard)
