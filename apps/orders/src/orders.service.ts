@@ -24,9 +24,14 @@ export class OrdersService {
       },
     });
   }
-  async create(order: CreateOrderInput): Promise<Order> {
-    const newOrder = this.orderRepository.create(order);
-    const neworder = await this.orderRepository.save(newOrder);
+  async create(order: CreateOrderInput, userId: string): Promise<Order> {
+    console.log(userId);
+    const requestOrder = {
+      name: order.name,
+      price: order.price,
+      userId: userId,
+    };
+    const neworder = await this.orderRepository.save(requestOrder);
     const orderData = {
       orderId: neworder.id,
       name: neworder.name,

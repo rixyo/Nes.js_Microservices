@@ -10,11 +10,14 @@ export class UserType {
   @Field()
   email: string;
   @Field()
-  password: string;
-  @Field()
   name: string;
   @Field()
   role: Role;
   @Field()
   createdAt: Date;
+}
+@ObjectType('Token')
+export class TokenType {
+  @Field()
+  access_token: string;
 }

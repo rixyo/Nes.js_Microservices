@@ -1,5 +1,5 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique } from 'typeorm';
-enum Role {
+export enum Role {
   ADMIN = 'admin',
   USER = 'user',
 }

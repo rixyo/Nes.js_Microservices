@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BillingService } from './billing.service';
-import { RmqModule } from '@app/common';
+import { GraphQLUserInterceptor, RmqModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { BillingController } from './billing.conroller';
@@ -10,10 +10,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { DatabaseModule } from './datasouce/datasource.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Billing } from './billing.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: './apps/billing/.env',
       validationSchema: Joi.object({
         RABBIT_MQ_URI: Joi.string().required(),
         RABBIT_MQ_BILLING_QUEUE: Joi.string().required(),
@@ -30,7 +32,14 @@ import { Billing } from './billing.entity';
     TypeOrmModule.forFeature([Billing]),
     RmqModule,
   ],
-  providers: [BillingService, BillingResolver],
+  providers: [
+    BillingService,
+    BillingResolver,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GraphQLUserInterceptor,
+    },
+  ],
   controllers: [BillingController],
 })
 export class BillingModule {}

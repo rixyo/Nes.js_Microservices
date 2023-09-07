@@ -1,4 +1,4 @@
-import { Order } from './orders.entity';
+
 import {
   Column,
   PrimaryGeneratedColumn,
@@ -26,9 +26,6 @@ export class User {
     default: Role.USER,
   })
   role: Role;
-  @ManyToMany(() => User, (user) => user.orders, { cascade: true })
-  @JoinTable({ name: 'user_orders' })
-  orders: Order[];
   @Column({
     default: new Date(),
   })

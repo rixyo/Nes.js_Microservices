@@ -29,11 +29,30 @@ services:
       - my_network
     depends_on:
       - BillingDatabase
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - '3001:3001'
+  user-service:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile.dev
+    env_file:
+      - ./apps/auth/.env
+    container_name: auth-service
+    networks:
+      - my_network
+    depends_on:
+      - UserDatabase
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
   rabbitmq:
     image: rabbitmq:3-management
     restart: always

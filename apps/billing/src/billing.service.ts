@@ -25,4 +25,10 @@ export class BillingService {
     console.log(newBill);
     return newBill;
   }
+  async getUserBilling(userId: string) {
+    const billing = await this.billingRepository.find({
+      where: { userId: userId },
+    });
+    return billing;
+  }
 }

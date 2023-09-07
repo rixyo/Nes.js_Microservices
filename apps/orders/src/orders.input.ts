@@ -11,7 +11,4 @@ export class CreateOrderInput {
   @IsNumber()
   @Field()
   price: number;
-  @IsNotEmpty()
-  @Field()
-  userId: string;
 }
