@@ -1,0 +1,98 @@
+version: '3.1'
+services:
+  order-service:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./apps/orders/Dockerfile.dev
+    env_file:
+      - ./apps/orders/.env
+    container_name: order-service
+    networks:
+      - my_network
+    depends_on:
+      - OrdersDatabase
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+  billing-service:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./apps/billing/Dockerfile.dev
+    env_file:
+      - ./apps/billing/.env
+    container_name: billing-service
+    networks:
+      - my_network
+    depends_on:
+      - BillingDatabase
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3001:3001'
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    container_name: rabbitmq
+    networks:
+      - my_network
+    ports:
+      - '5672:5672'
+  OrdersDatabase:
+    image: postgres:latest
+    restart: always
+    container_name: order-database
+    environment:
+      POSTGRES_USER: roixy
+      POSTGRES_PASSWORD: mysecret
+      POSTGRES_DB: Orders
+    networks:
+      - my_network
+    ports:
+      - '5432:5432'
+    volumes:
+      - order-postgresql-data:/var/lib/postgresql/data
+  BillingDatabase:
+    image: postgres:latest
+    restart: always
+    container_name: billing-database
+    environment:
+      POSTGRES_USER: roixy
+      POSTGRES_PASSWORD: mysecret
+      POSTGRES_DB: Billing
+    depends_on:
+      - OrdersDatabase
+    networks:
+      - my_network
+    ports:
+      - '5433:5432'
+    volumes:
+      - billing-postgresql-data:/var/lib/postgresql/data
+
+  UserDatabase:
+    image: postgres:latest
+    restart: always
+    container_name: auth-database
+    environment:
+      POSTGRES_USER: roixy
+      POSTGRES_PASSWORD: mysecret
+    networks:
+      - my_network
+    depends_on:
+      - OrdersDatabase
+      - BillingDatabase
+    ports:
+      - '5434:5432'
+    volumes:
+      - user-postgresql-data:/var/lib/postgresql/data
+networks:
+  my_network:
+
+volumes:
+  order-postgresql-data:
+  user-postgresql-data:
+  billing-postgresql-data:
