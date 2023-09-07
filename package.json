@@ -1,8 +1,8 @@
 {
   "name": "ordering_app",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "This repository contains a set of Nest.js microservices organized within a mono repo structure. The microservices utilize various technologies and features, including RabbitMQ, PostgreSQL, authentication guards (AuthGuard), interceptors, decorators, GraphQL, and TypeORM. This README provides an overview of the project's structure and key components",
+  "author": "Roixy",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
