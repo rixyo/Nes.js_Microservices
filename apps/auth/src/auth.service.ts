@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateSignupInput, LoginInput } from './user/user.input';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { TokenType, UserType } from './user/user.type';
+import { DeleteUserType, TokenType, UserType } from './user/user.type';
 enum Role {
   ADMIN = 'admin',
   USER = 'user',
@@ -79,5 +79,9 @@ export class AuthService {
   }
   async getAllUsers(): Promise<UserType[]> {
     return await this.userRepository.find();
+  }
+  async deleteAllRecords(): Promise<DeleteUserType> {
+    await this.userRepository.clear();
+    return { message: 'All records deleted' };
   }
 }

@@ -4,6 +4,7 @@ import { RmqService } from '@app/common';
 import { Repository } from 'typeorm';
 import { Billing } from './billing.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteBillingType } from './billing.type';
 @Injectable()
 export class BillingService {
   constructor(
@@ -30,5 +31,9 @@ export class BillingService {
       where: { userId: userId },
     });
     return billing;
+  }
+  async deleteAll(): Promise<DeleteBillingType> {
+    await this.billingRepository.clear();
+    return { message: 'All records deleted' };
   }
 }

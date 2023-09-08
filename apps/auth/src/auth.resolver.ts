@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { TokenType, UserType } from './user/user.type';
+import { DeleteUserType, TokenType, UserType } from './user/user.type';
 import { AuthService } from './auth.service';
 import { CreateSignupInput, LoginInput } from './user/user.input';
 import { AuthGuard, JWTUserType, User } from '@app/common';
@@ -30,5 +30,11 @@ export class AuthResolver {
   @Mutation((returns) => TokenType)
   async login(@Args('loginInput') loginInput: LoginInput) {
     return await this.authService.login(loginInput);
+  }
+  @Mutation((returns) => DeleteUserType)
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
+  async deleteAllUsers() {
+    return await this.authService.deleteAllRecords();
   }
 }

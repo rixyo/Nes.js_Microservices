@@ -6,6 +6,7 @@ import { BILLING_SERVICE } from './constants/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteOrderType } from './orders.type';
 @Injectable()
 export class OrdersService {
   constructor(
@@ -24,8 +25,11 @@ export class OrdersService {
       },
     });
   }
-  async create(order: CreateOrderInput, userId: string): Promise<Order> {
-    console.log(userId);
+  async create(
+    order: CreateOrderInput,
+    userId: string,
+    jwtToken: string,
+  ): Promise<Order> {
     const requestOrder = {
       name: order.name,
       price: order.price,
@@ -41,8 +45,13 @@ export class OrdersService {
     await lastValueFrom(
       this.billingClient.emit('order_data', {
         orderData,
+        Authentication: jwtToken,
       }),
     );
     return neworder;
+  }
+  async deleteAll(): Promise<DeleteOrderType> {
+    await this.orderRepository.clear();
+    return { message: 'All records deleted' };
   }
 }

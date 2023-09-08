@@ -15,3 +15,8 @@ export class BillingType {
   @Field()
   createdAt: Date;
 }
+@ObjectType('DeleteBilling')
+export class DeleteBillingType {
+  @Field()
+  message: string;
+}

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BillingService } from './billing.service';
-import { GraphQLUserInterceptor, RmqModule } from '@app/common';
+import { AuthGuard, GraphQLUserInterceptor, RmqModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { BillingController } from './billing.conroller';
@@ -10,7 +10,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { DatabaseModule } from './datasouce/datasource.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Billing } from './billing.entity';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,6 +38,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     {
       provide: APP_INTERCEPTOR,
       useClass: GraphQLUserInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
   controllers: [BillingController],

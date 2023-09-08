@@ -21,3 +21,8 @@ export class TokenType {
   @Field()
   access_token: string;
 }
+@ObjectType('DeleteUser')
+export class DeleteUserType {
+  @Field()
+  message: string;
+}

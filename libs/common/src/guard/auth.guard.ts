@@ -17,33 +17,54 @@ type JWTPayload = {
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const gqlContext = GqlExecutionContext.create(context);
-    const { req } = gqlContext.getContext();
-    const roles = this.reflector.get<Role[]>(
-      'user_role',
-      gqlContext.getHandler(),
-    );
-    try {
-      if (!roles) {
-        return true; // If no roles are required, access is granted.
-      }
-      const token = this.getTokenFromRequest(req);
-      if (!token) {
-        return false; // No token found, deny access.
-      }
-
-      const user = jwt.verify(token, 'mysupersecret') as JWTPayload;
-      req.user = user;
-      const result = roles.includes(user.role);
-      if (result === true) {
-        return true;
-      } else {
+  canActivate(context: ExecutionContext) {
+    if (context.getType() === 'rpc') {
+      const authentication = context.switchToRpc().getData().Authentication;
+      const roles = this.reflector.get<Role[]>(
+        'user_role',
+        context.getHandler(),
+      );
+      try {
+        if (!roles) {
+          return true; // If no roles are required, access is granted.
+        }
+        const user = jwt.verify(authentication, 'mysupersecret') as JWTPayload;
+        const result = roles.includes(user.role);
+        if (result === true) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
         return false;
       }
-    } catch (error) {
-      return false;
+    } else {
+      const gqlContext = GqlExecutionContext.create(context);
+      const { req } = gqlContext.getContext();
+      const roles = this.reflector.get<Role[]>(
+        'user_role',
+        gqlContext.getHandler(),
+      );
+      try {
+        if (!roles) {
+          return true; // If no roles are required, access is granted.
+        }
+        const token = this.getTokenFromRequest(req);
+        if (!token) {
+          return false; // No token found, deny access.
+        }
+
+        const user = jwt.verify(token, 'mysupersecret') as JWTPayload;
+        req.user = user;
+        const result = roles.includes(user.role);
+        if (result === true) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        return false;
+      }
     }
   }
 

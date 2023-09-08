@@ -12,3 +12,8 @@ export class OrderType {
   @Field()
   createdAt: Date;
 }
+@ObjectType('DeleteOrder')
+export class DeleteOrderType {
+  @Field()
+  message: string;
+}
